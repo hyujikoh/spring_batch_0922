@@ -1,4 +1,4 @@
-package com.example.spring_batch_0922.job.helloworld;
+package com.example.spring_batch_0922.job.withParam;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -15,56 +15,33 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class HelloWorldJobConfig {
+public class WithParamJob {
     private final JobBuilderFactory jobBuilderFactory;
 
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job helloWorldJob() {
-        return jobBuilderFactory.get("helloWorldJob")
-                //.incrementer(new RunIdIncrementer()) // 강제로 매번 다른 ID를 실행시에 파라미터로 부여
-                .start(helloWorldStep1()).next(helloWorldStep2())
+    public Job WithParamJob() {
+        return jobBuilderFactory.get("WithParamJob")
+                .incrementer(new RunIdIncrementer()) // 강제로 매번 다른 ID를 실행시에 파라미터로 부여
+                .start(WithParamJobStep1())
                 .build();
     }
 
-
-
     @Bean
     @JobScope
-    public Step helloWorldStep1() {
+    public Step WithParamJobStep1() {
         return stepBuilderFactory.get("helloWorldStep1")
-                .tasklet(helloWorldTasklet())
+                .tasklet(WithParamJodTasklet())
                 .build();
-    }
-
-    @Bean
-    @JobScope
-    public Step helloWorldStep2() {
-        return stepBuilderFactory.get("helloWorldStep2")
-                .tasklet(helloWorldTasklet2())
-                .build();
-    }
-
-    @Bean
-    @StepScope
-    public Tasklet helloWorldTasklet() {
-        return (contribution, chunkContext) -> {
-            System.out.println("헬로월드!");
-            return RepeatStatus.FINISHED;
-        };
     }
 
 
     @Bean
     @StepScope
-    public Tasklet helloWorldTasklet2() {
+    public Tasklet WithParamJodTasklet() {
         return (contribution, chunkContext) -> {
-            System.out.println("헬로월드 테스클릿 2");
-
-            if ( false ) {
-                throw new Exception("실패 : 헬로월드 테스클릿 2");
-            }
+            System.out.println("WithParam 테스클릿 2!");
             return RepeatStatus.FINISHED;
         };
     }
