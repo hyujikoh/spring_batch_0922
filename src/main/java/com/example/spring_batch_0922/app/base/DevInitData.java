@@ -3,6 +3,7 @@ package com.example.spring_batch_0922.app.base;
 import com.example.spring_batch_0922.app.cart.service.CartService;
 import com.example.spring_batch_0922.app.member.entity.Member;
 import com.example.spring_batch_0922.app.member.service.MemberService;
+import com.example.spring_batch_0922.app.order.service.OrderService;
 import com.example.spring_batch_0922.app.product.entity.Product;
 import com.example.spring_batch_0922.app.product.entity.ProductOption;
 import com.example.spring_batch_0922.app.product.service.ProductService;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 @Profile("dev")
 public class DevInitData {
     @Bean
-    public CommandLineRunner initData(MemberService memberService, ProductService productService, CartService cartService) {
+    public CommandLineRunner initData(MemberService memberService, ProductService productService, CartService cartService, OrderService orderService) {
         return args ->
         {
             String password = "{noop}1234";
@@ -36,6 +37,7 @@ public class DevInitData {
             cartService.addItem(member1, productOption__RED_44, 2); // productOption__RED_44 총 수량 3
             cartService.addItem(member1, productOption__BLUE_44, 1); // productOption__BLUE_44 총 수량 1
 
+            orderService.createFromCart(member1);
         };
     }
 }
