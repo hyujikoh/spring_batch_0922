@@ -10,6 +10,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,27 +22,29 @@ public class WithParamJob {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job WithParamJob() {
+    public Job WithParamJob(Step WithParamJobStep1) {
         return jobBuilderFactory.get("WithParamJob")
                 .incrementer(new RunIdIncrementer()) // 강제로 매번 다른 ID를 실행시에 파라미터로 부여
-                .start(WithParamJobStep1())
+                .start(WithParamJobStep1)
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step WithParamJobStep1() {
+    public Step WithParamJobStep1(Tasklet WithParamJodTasklet) {
         return stepBuilderFactory.get("helloWorldStep1")
-                .tasklet(WithParamJodTasklet())
+                .tasklet(WithParamJodTasklet)
                 .build();
     }
 
 
     @Bean
     @StepScope
-    public Tasklet WithParamJodTasklet() {
+    public Tasklet WithParamJodTasklet(@Value("#{jobParameters['name']}") String name,
+                                       @Value("#{jobParameters['age']}") int age
+    ) {
         return (contribution, chunkContext) -> {
-            System.out.println("WithParam 테스클릿 2!");
+            System.out.println("WithParam 테스클릿 1, %s, %d".formatted(name, age));
             return RepeatStatus.FINISHED;
         };
     }
